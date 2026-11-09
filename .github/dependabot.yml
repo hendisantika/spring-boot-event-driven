@@ -1,20 +1,74 @@
 version: 2
+
 updates:
+  # ---------------------------------------------------------------------------
+  # Maven: order-service & payment-service
+  # ---------------------------------------------------------------------------
   - package-ecosystem: maven
-    directory: "/order-service"
+    directories:
+      - "/order-service"
+      - "/payment-service"
     schedule:
       interval: daily
-      time: '05:00'
+      time: "05:00"
       timezone: Asia/Jakarta
     open-pull-requests-limit: 10
-  - package-ecosystem: maven
-    directory: "/payment-service"
-    schedule:
-      interval: daily
-      time: '05:00'
-      timezone: Asia/Jakarta
-    open-pull-requests-limit: 10
-  - package-ecosystem: "github-actions"
+    target-branch: main
+    assignees:
+      - hendisantika
+    labels:
+      - dependencies
+      - maven
+    commit-message:
+      prefix: "deps(maven)"
+      include: scope
+    rebase-strategy: auto
+    groups:
+      spring-boot:
+        patterns:
+          - "org.springframework.boot:*"
+      spring:
+        patterns:
+          - "org.springframework*"
+        exclude-patterns:
+          - "org.springframework.boot:*"
+      kafka:
+        patterns:
+          - "org.apache.kafka:*"
+      test:
+        patterns:
+          - "org.junit*"
+          - "org.mockito*"
+          - "org.assertj*"
+          - "org.testcontainers*"
+      maven-plugins:
+        patterns:
+          - "org.apache.maven.plugins:*"
+          - "*-maven-plugin"
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # ---------------------------------------------------------------------------
+  # GitHub Actions
+  # ---------------------------------------------------------------------------
+  - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Asia/Jakarta
+    open-pull-requests-limit: 5
+    assignees:
+      - hendisantika
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: "ci(actions)"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
